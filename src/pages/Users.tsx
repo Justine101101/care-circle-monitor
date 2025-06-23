@@ -1,9 +1,8 @@
 
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
 import DataTable from "@/components/DataTable";
+import { AddUserDialog } from "@/components/AddUserDialog";
 import { useToast } from "@/hooks/use-toast";
 
 const Users = () => {
@@ -43,6 +42,14 @@ const Users = () => {
     { key: "status", title: "Status" },
   ];
 
+  const handleAddUser = (newUser: any) => {
+    setUsers([...users, newUser]);
+    toast({
+      title: "User Added",
+      description: `${newUser.name} has been added to the system`,
+    });
+  };
+
   const handleEdit = (user: any) => {
     toast({
       title: "Edit User",
@@ -58,6 +65,12 @@ const Users = () => {
     });
   };
 
+  // Calculate dynamic stats
+  const totalUsers = users.length;
+  const doctorsCount = users.filter(u => u.role === "Doctor").length;
+  const nursesCount = users.filter(u => u.role === "Nurse").length;
+  const adminsCount = users.filter(u => u.role === "Administrator").length;
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -65,34 +78,31 @@ const Users = () => {
           <h1 className="text-3xl font-bold text-gray-900">Users</h1>
           <p className="text-gray-600">Manage healthcare staff and administrators</p>
         </div>
-        <Button className="bg-blue-600 hover:bg-blue-700">
-          <Plus className="h-4 w-4 mr-2" />
-          Add User
-        </Button>
+        <AddUserDialog onAddUser={handleAddUser} />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-2xl">15</CardTitle>
+            <CardTitle className="text-2xl">{totalUsers}</CardTitle>
             <CardDescription>Total Users</CardDescription>
           </CardHeader>
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-2xl">8</CardTitle>
+            <CardTitle className="text-2xl">{doctorsCount}</CardTitle>
             <CardDescription>Doctors</CardDescription>
           </CardHeader>
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-2xl">5</CardTitle>
+            <CardTitle className="text-2xl">{nursesCount}</CardTitle>
             <CardDescription>Nurses</CardDescription>
           </CardHeader>
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-2xl">2</CardTitle>
+            <CardTitle className="text-2xl">{adminsCount}</CardTitle>
             <CardDescription>Administrators</CardDescription>
           </CardHeader>
         </Card>
