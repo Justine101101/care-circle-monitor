@@ -53,7 +53,9 @@ export function AppSidebar() {
   return (
     <Sidebar>
       <SidebarHeader className="p-6">
-        <h2 className="text-xl font-bold text-blue-600">HealthCare Pro</h2>
+        <h2 className="text-lg font-bold text-blue-600 leading-tight">
+          HEALTHCARE MONITORING SYSTEM IN BARANGAY HAPPY HOMES OLD LUCBAN, BAGUIO CITY
+        </h2>
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
