@@ -1,9 +1,8 @@
 
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
 import DataTable from "@/components/DataTable";
+import { AddPatientDialog } from "@/components/AddPatientDialog";
 import { useToast } from "@/hooks/use-toast";
 
 const Patients = () => {
@@ -47,6 +46,14 @@ const Patients = () => {
     { key: "lastVisit", title: "Last Visit" },
   ];
 
+  const handleAddPatient = (newPatient: any) => {
+    setPatients([...patients, newPatient]);
+    toast({
+      title: "Patient Added",
+      description: `${newPatient.name} has been registered`,
+    });
+  };
+
   const handleEdit = (patient: any) => {
     toast({
       title: "Edit Patient",
@@ -62,6 +69,9 @@ const Patients = () => {
     });
   };
 
+  // Calculate dynamic stats
+  const totalPatients = patients.length;
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -69,16 +79,13 @@ const Patients = () => {
           <h1 className="text-3xl font-bold text-gray-900">Patients</h1>
           <p className="text-gray-600">Manage patient records and information</p>
         </div>
-        <Button className="bg-blue-600 hover:bg-blue-700">
-          <Plus className="h-4 w-4 mr-2" />
-          Add Patient
-        </Button>
+        <AddPatientDialog onAddPatient={handleAddPatient} />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-2xl">1,247</CardTitle>
+            <CardTitle className="text-2xl">{totalPatients}</CardTitle>
             <CardDescription>Total Patients</CardDescription>
           </CardHeader>
         </Card>

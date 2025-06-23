@@ -1,9 +1,8 @@
 
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
 import DataTable from "@/components/DataTable";
+import { AddAppointmentDialog } from "@/components/AddAppointmentDialog";
 import { useToast } from "@/hooks/use-toast";
 
 const Appointments = () => {
@@ -47,6 +46,14 @@ const Appointments = () => {
     { key: "status", title: "Status" },
   ];
 
+  const handleAddAppointment = (newAppointment: any) => {
+    setAppointments([...appointments, newAppointment]);
+    toast({
+      title: "Appointment Scheduled",
+      description: `Appointment for ${newAppointment.patientName} has been scheduled`,
+    });
+  };
+
   const handleEdit = (appointment: any) => {
     toast({
       title: "Edit Appointment",
@@ -62,6 +69,9 @@ const Appointments = () => {
     });
   };
 
+  // Calculate dynamic stats
+  const totalAppointments = appointments.length;
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -69,17 +79,14 @@ const Appointments = () => {
           <h1 className="text-3xl font-bold text-gray-900">Appointments</h1>
           <p className="text-gray-600">Schedule and manage patient appointments</p>
         </div>
-        <Button className="bg-blue-600 hover:bg-blue-700">
-          <Plus className="h-4 w-4 mr-2" />
-          Schedule Appointment
-        </Button>
+        <AddAppointmentDialog onAddAppointment={handleAddAppointment} />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-2xl">156</CardTitle>
-            <CardDescription>Today's Appointments</CardDescription>
+            <CardTitle className="text-2xl">{totalAppointments}</CardTitle>
+            <CardDescription>Total Appointments</CardDescription>
           </CardHeader>
         </Card>
         <Card>

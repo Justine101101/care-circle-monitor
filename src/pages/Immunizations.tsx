@@ -1,9 +1,8 @@
 
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
 import DataTable from "@/components/DataTable";
+import { AddImmunizationDialog } from "@/components/AddImmunizationDialog";
 import { useToast } from "@/hooks/use-toast";
 
 const Immunizations = () => {
@@ -47,6 +46,14 @@ const Immunizations = () => {
     { key: "nextDue", title: "Next Due" },
   ];
 
+  const handleAddImmunization = (newImmunization: any) => {
+    setImmunizations([...immunizations, newImmunization]);
+    toast({
+      title: "Immunization Added",
+      description: `${newImmunization.vaccine} for ${newImmunization.patientName} has been recorded`,
+    });
+  };
+
   const handleEdit = (immunization: any) => {
     toast({
       title: "Edit Immunization",
@@ -62,6 +69,9 @@ const Immunizations = () => {
     });
   };
 
+  // Calculate dynamic stats
+  const totalImmunizations = immunizations.length;
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -69,16 +79,13 @@ const Immunizations = () => {
           <h1 className="text-3xl font-bold text-gray-900">Immunizations</h1>
           <p className="text-gray-600">Track and manage patient vaccinations</p>
         </div>
-        <Button className="bg-blue-600 hover:bg-blue-700">
-          <Plus className="h-4 w-4 mr-2" />
-          Add Immunization
-        </Button>
+        <AddImmunizationDialog onAddImmunization={handleAddImmunization} />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-2xl">2,156</CardTitle>
+            <CardTitle className="text-2xl">{totalImmunizations}</CardTitle>
             <CardDescription>Total Vaccines Given</CardDescription>
           </CardHeader>
         </Card>
