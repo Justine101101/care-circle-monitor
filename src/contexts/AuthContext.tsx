@@ -26,15 +26,45 @@ export const useAuth = () => {
   return context;
 };
 
+// Helper functions to safely access localStorage
+const safeLocalStorageGet = (key: string): string | null => {
+  try {
+    return localStorage.getItem(key);
+  } catch (error) {
+    console.warn('localStorage access denied:', error);
+    return null;
+  }
+};
+
+const safeLocalStorageSet = (key: string, value: string): void => {
+  try {
+    localStorage.setItem(key, value);
+  } catch (error) {
+    console.warn('localStorage write denied:', error);
+  }
+};
+
+const safeLocalStorageRemove = (key: string): void => {
+  try {
+    localStorage.removeItem(key);
+  } catch (error) {
+    console.warn('localStorage remove denied:', error);
+  }
+};
+
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     // Check if user is logged in on app start
-    const savedUser = localStorage.getItem('user');
+    const savedUser = safeLocalStorageGet('user');
     if (savedUser) {
-      setUser(JSON.parse(savedUser));
+      try {
+        setUser(JSON.parse(savedUser));
+      } catch (error) {
+        console.warn('Failed to parse saved user data:', error);
+      }
     }
     setIsLoading(false);
   }, []);
@@ -42,13 +72,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
       // Simulate API call - in real app, this would be an actual API request
-      const savedUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+      const savedUsersString = safeLocalStorageGet('registeredUsers');
+      const savedUsers = savedUsersString ? JSON.parse(savedUsersString) : [];
       const user = savedUsers.find((u: any) => u.email === email && u.password === password);
       
       if (user) {
         const { password: _, ...userWithoutPassword } = user;
         setUser(userWithoutPassword);
-        localStorage.setItem('user', JSON.stringify(userWithoutPassword));
+        safeLocalStorageSet('user', JSON.stringify(userWithoutPassword));
         return true;
       }
       return false;
@@ -61,7 +92,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const register = async (name: string, email: string, password: string, role: string): Promise<boolean> => {
     try {
       // Simulate API call - in real app, this would be an actual API request
-      const savedUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
+      const savedUsersString = safeLocalStorageGet('registeredUsers');
+      const savedUsers = savedUsersString ? JSON.parse(savedUsersString) : [];
       
       // Check if user already exists
       if (savedUsers.find((u: any) => u.email === email)) {
@@ -77,11 +109,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       };
 
       savedUsers.push(newUser);
-      localStorage.setItem('registeredUsers', JSON.stringify(savedUsers));
+      safeLocalStorageSet('registeredUsers', JSON.stringify(savedUsers));
 
       const { password: _, ...userWithoutPassword } = newUser;
       setUser(userWithoutPassword);
-      localStorage.setItem('user', JSON.stringify(userWithoutPassword));
+      safeLocalStorageSet('user', JSON.stringify(userWithoutPassword));
       return true;
     } catch (error) {
       console.error('Registration error:', error);
@@ -91,7 +123,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem('user');
+    safeLocalStorageRemove('user');
   };
 
   return (
