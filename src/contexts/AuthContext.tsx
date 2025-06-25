@@ -4,14 +4,14 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 interface User {
   id: number;
   name: string;
-  email: string;
+  username: string;
   role: string;
 }
 
 interface AuthContextType {
   user: User | null;
-  login: (email: string, password: string) => Promise<boolean>;
-  register: (name: string, email: string, password: string, role: string) => Promise<boolean>;
+  login: (username: string, password: string) => Promise<boolean>;
+  register: (name: string, username: string, password: string, role: string) => Promise<boolean>;
   logout: () => void;
   isLoading: boolean;
 }
@@ -69,12 +69,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setIsLoading(false);
   }, []);
 
-  const login = async (email: string, password: string): Promise<boolean> => {
+  const login = async (username: string, password: string): Promise<boolean> => {
     try {
       // Simulate API call - in real app, this would be an actual API request
       const savedUsersString = safeLocalStorageGet('registeredUsers');
       const savedUsers = savedUsersString ? JSON.parse(savedUsersString) : [];
-      const user = savedUsers.find((u: any) => u.email === email && u.password === password);
+      const user = savedUsers.find((u: any) => u.username === username && u.password === password);
       
       if (user) {
         const { password: _, ...userWithoutPassword } = user;
@@ -89,21 +89,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const register = async (name: string, email: string, password: string, role: string): Promise<boolean> => {
+  const register = async (name: string, username: string, password: string, role: string): Promise<boolean> => {
     try {
       // Simulate API call - in real app, this would be an actual API request
       const savedUsersString = safeLocalStorageGet('registeredUsers');
       const savedUsers = savedUsersString ? JSON.parse(savedUsersString) : [];
       
       // Check if user already exists
-      if (savedUsers.find((u: any) => u.email === email)) {
+      if (savedUsers.find((u: any) => u.username === username)) {
         return false;
       }
 
       const newUser = {
         id: Date.now(),
         name,
-        email,
+        username,
         password,
         role
       };

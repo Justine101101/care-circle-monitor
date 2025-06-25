@@ -13,7 +13,7 @@ const Login = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [formData, setFormData] = useState({
     name: '',
-    email: '',
+    username: '',
     password: '',
     confirmPassword: '',
     role: ''
@@ -43,7 +43,7 @@ const Login = () => {
 
     try {
       if (isLogin) {
-        const success = await login(formData.email, formData.password);
+        const success = await login(formData.username, formData.password);
         if (success) {
           toast({
             title: "Login Successful",
@@ -52,7 +52,7 @@ const Login = () => {
         } else {
           toast({
             title: "Login Failed",
-            description: "Invalid email or password",
+            description: "Invalid username or password",
             variant: "destructive"
           });
         }
@@ -68,7 +68,7 @@ const Login = () => {
           return;
         }
 
-        if (!formData.name || !formData.email || !formData.password || !formData.role) {
+        if (!formData.name || !formData.username || !formData.password || !formData.role) {
           toast({
             title: "Registration Failed",
             description: "Please fill in all fields",
@@ -78,7 +78,7 @@ const Login = () => {
           return;
         }
 
-        const success = await register(formData.name, formData.email, formData.password, formData.role);
+        const success = await register(formData.name, formData.username, formData.password, formData.role);
         if (success) {
           toast({
             title: "Registration Successful",
@@ -87,7 +87,7 @@ const Login = () => {
         } else {
           toast({
             title: "Registration Failed",
-            description: "Email already exists or registration failed",
+            description: "Username already exists or registration failed",
             variant: "destructive"
           });
         }
@@ -107,7 +107,7 @@ const Login = () => {
     setIsLogin(!isLogin);
     setFormData({
       name: '',
-      email: '',
+      username: '',
       password: '',
       confirmPassword: '',
       role: ''
@@ -160,14 +160,14 @@ const Login = () => {
               )}
 
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="username">Username</Label>
                 <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  value={formData.email}
+                  id="username"
+                  name="username"
+                  type="text"
+                  value={formData.username}
                   onChange={handleInputChange}
-                  placeholder="Enter your email"
+                  placeholder="Enter your username"
                   required
                 />
               </div>
