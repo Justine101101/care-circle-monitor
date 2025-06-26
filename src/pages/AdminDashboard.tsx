@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -6,8 +5,14 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Users, UserCheck, FileText, Syringe, Calendar, Activity, TrendingUp, AlertTriangle, Shield, Database } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from "recharts";
+import { GenerateReportDialog } from "@/components/GenerateReportDialog";
+import { SecuritySettingsDialog } from "@/components/SecuritySettingsDialog";
+import { BackupSystemDialog } from "@/components/BackupSystemDialog";
+import { useNavigate } from "react-router-dom";
 
 const AdminDashboard = () => {
+  const navigate = useNavigate();
+  
   // Sample data for charts
   const userGrowthData = [
     { month: 'Jan', users: 45 },
@@ -71,10 +76,12 @@ const AdminDashboard = () => {
           <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
           <p className="text-gray-600">Healthcare System Overview & Management</p>
         </div>
-        <Button className="bg-blue-600 hover:bg-blue-700">
-          <Database className="h-4 w-4 mr-2" />
-          Generate Report
-        </Button>
+        <GenerateReportDialog>
+          <Button className="bg-blue-600 hover:bg-blue-700">
+            <Database className="h-4 w-4 mr-2" />
+            Generate Report
+          </Button>
+        </GenerateReportDialog>
       </div>
 
       {/* Key Metrics */}
@@ -263,22 +270,32 @@ const AdminDashboard = () => {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <Button variant="outline" className="h-20 flex flex-col items-center justify-center">
+            <Button 
+              variant="outline" 
+              className="h-20 flex flex-col items-center justify-center"
+              onClick={() => navigate('/dashboard/users')}
+            >
               <Users className="h-6 w-6 mb-2" />
               <span className="text-sm">Manage Users</span>
             </Button>
-            <Button variant="outline" className="h-20 flex flex-col items-center justify-center">
-              <FileText className="h-6 w-6 mb-2" />
-              <span className="text-sm">View Reports</span>
-            </Button>
-            <Button variant="outline" className="h-20 flex flex-col items-center justify-center">
-              <Shield className="h-6 w-6 mb-2" />
-              <span className="text-sm">Security Settings</span>
-            </Button>
-            <Button variant="outline" className="h-20 flex flex-col items-center justify-center">
-              <Database className="h-6 w-6 mb-2" />
-              <span className="text-sm">Backup System</span>
-            </Button>
+            <GenerateReportDialog>
+              <Button variant="outline" className="h-20 flex flex-col items-center justify-center">
+                <FileText className="h-6 w-6 mb-2" />
+                <span className="text-sm">View Reports</span>
+              </Button>
+            </GenerateReportDialog>
+            <SecuritySettingsDialog>
+              <Button variant="outline" className="h-20 flex flex-col items-center justify-center">
+                <Shield className="h-6 w-6 mb-2" />
+                <span className="text-sm">Security Settings</span>
+              </Button>
+            </SecuritySettingsDialog>
+            <BackupSystemDialog>
+              <Button variant="outline" className="h-20 flex flex-col items-center justify-center">
+                <Database className="h-6 w-6 mb-2" />
+                <span className="text-sm">Backup System</span>
+              </Button>
+            </BackupSystemDialog>
           </div>
         </CardContent>
       </Card>
