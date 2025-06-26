@@ -8,9 +8,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { Activity, UserPlus, LogIn } from 'lucide-react';
+import ForgotPassword from './ForgotPassword';
 
 const Login = () => {
-  const [isLogin, setIsLogin] = useState(true);
+  const [currentView, setCurrentView] = useState<'login' | 'register' | 'forgot-password'>('login');
   const [formData, setFormData] = useState({
     name: '',
     username: '',
@@ -42,7 +43,7 @@ const Login = () => {
     setIsLoading(true);
 
     try {
-      if (isLogin) {
+      if (currentView === 'login') {
         const success = await login(formData.username, formData.password);
         if (success) {
           toast({
@@ -56,7 +57,7 @@ const Login = () => {
             variant: "destructive"
           });
         }
-      } else {
+      } else if (currentView === 'register') {
         // Registration validation
         if (formData.password !== formData.confirmPassword) {
           toast({
@@ -103,8 +104,8 @@ const Login = () => {
     setIsLoading(false);
   };
 
-  const toggleMode = () => {
-    setIsLogin(!isLogin);
+  const toggleMode = (mode: 'login' | 'register') => {
+    setCurrentView(mode);
     setFormData({
       name: '',
       username: '',
@@ -113,6 +114,27 @@ const Login = () => {
       role: ''
     });
   };
+
+  if (currentView === 'forgot-password') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-6">
+        <div className="w-full max-w-md">
+          <div className="text-center mb-8">
+            <div className="flex justify-center mb-4">
+              <Activity className="h-12 w-12 text-blue-600" />
+            </div>
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">
+              Healthcare Monitoring System
+            </h1>
+            <p className="text-gray-600">
+              Barangay Happy Homes Old Lucban, Baguio City
+            </p>
+          </div>
+          <ForgotPassword onBack={() => setCurrentView('login')} />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-6">
@@ -132,11 +154,11 @@ const Login = () => {
         <Card>
           <CardHeader className="text-center">
             <CardTitle className="flex items-center justify-center gap-2">
-              {isLogin ? <LogIn className="h-5 w-5" /> : <UserPlus className="h-5 w-5" />}
-              {isLogin ? 'Login' : 'Sign Up'}
+              {currentView === 'login' ? <LogIn className="h-5 w-5" /> : <UserPlus className="h-5 w-5" />}
+              {currentView === 'login' ? 'Login' : 'Sign Up'}
             </CardTitle>
             <CardDescription>
-              {isLogin 
+              {currentView === 'login' 
                 ? 'Enter your credentials to access the system' 
                 : 'Create a new account to get started'
               }
@@ -144,7 +166,7 @@ const Login = () => {
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
-              {!isLogin && (
+              {currentView === 'register' && (
                 <div className="space-y-2">
                   <Label htmlFor="name">Full Name</Label>
                   <Input
@@ -154,7 +176,7 @@ const Login = () => {
                     value={formData.name}
                     onChange={handleInputChange}
                     placeholder="Enter your full name"
-                    required={!isLogin}
+                    required={currentView === 'register'}
                   />
                 </div>
               )}
@@ -185,7 +207,7 @@ const Login = () => {
                 />
               </div>
 
-              {!isLogin && (
+              {currentView === 'register' && (
                 <>
                   <div className="space-y-2">
                     <Label htmlFor="confirmPassword">Confirm Password</Label>
@@ -222,17 +244,29 @@ const Login = () => {
                 className="w-full" 
                 disabled={isLoading}
               >
-                {isLoading ? 'Please wait...' : (isLogin ? 'Login' : 'Sign Up')}
+                {isLoading ? 'Please wait...' : (currentView === 'login' ? 'Login' : 'Sign Up')}
               </Button>
             </form>
+
+            {currentView === 'login' && (
+              <div className="mt-4 text-center">
+                <Button 
+                  variant="link" 
+                  onClick={() => setCurrentView('forgot-password')}
+                  className="text-sm text-blue-600"
+                >
+                  Forgot Password?
+                </Button>
+              </div>
+            )}
 
             <div className="mt-6 text-center">
               <Button 
                 variant="link" 
-                onClick={toggleMode}
+                onClick={() => toggleMode(currentView === 'login' ? 'register' : 'login')}
                 className="text-sm"
               >
-                {isLogin 
+                {currentView === 'login' 
                   ? "Don't have an account? Sign up" 
                   : "Already have an account? Login"
                 }

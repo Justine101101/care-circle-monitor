@@ -1,5 +1,5 @@
 
-import { Users, UserCheck, FileText, Syringe, Calendar, Activity, LayoutDashboard } from "lucide-react";
+import { Users, UserCheck, FileText, Syringe, Calendar, Activity, LayoutDashboard, Settings } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 
 import {
@@ -49,6 +49,11 @@ const items = [
     title: "System Logs",
     url: "/dashboard/system-logs",
     icon: Activity,
+  },
+  {
+    title: "Settings",
+    url: "/dashboard/settings",
+    icon: Settings,
   },
 ];
 

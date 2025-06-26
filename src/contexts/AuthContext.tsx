@@ -14,6 +14,9 @@ interface AuthContextType {
   register: (name: string, username: string, password: string, role: string) => Promise<boolean>;
   logout: () => void;
   isLoading: boolean;
+  forgotPassword: (username: string) => Promise<{ success: boolean; securityQuestion?: string; error?: string }>;
+  resetPassword: (username: string, securityAnswer: string, newPassword: string) => Promise<boolean>;
+  changePassword: (currentPassword: string, newPassword: string) => Promise<boolean>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -77,7 +80,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const user = savedUsers.find((u: any) => u.username === username && u.password === password);
       
       if (user) {
-        const { password: _, ...userWithoutPassword } = user;
+        const { password: _, securityQuestion: __, securityAnswer: ___, ...userWithoutPassword } = user;
         setUser(userWithoutPassword);
         safeLocalStorageSet('user', JSON.stringify(userWithoutPassword));
         return true;
@@ -105,18 +108,74 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         name,
         username,
         password,
-        role
+        role,
+        securityQuestion: "What is your favorite color?", // Default security question
+        securityAnswer: "blue" // Default security answer
       };
 
       savedUsers.push(newUser);
       safeLocalStorageSet('registeredUsers', JSON.stringify(savedUsers));
 
-      const { password: _, ...userWithoutPassword } = newUser;
+      const { password: _, securityQuestion: __, securityAnswer: ___, ...userWithoutPassword } = newUser;
       setUser(userWithoutPassword);
       safeLocalStorageSet('user', JSON.stringify(userWithoutPassword));
       return true;
     } catch (error) {
       console.error('Registration error:', error);
+      return false;
+    }
+  };
+
+  const forgotPassword = async (username: string): Promise<{ success: boolean; securityQuestion?: string; error?: string }> => {
+    try {
+      const savedUsersString = safeLocalStorageGet('registeredUsers');
+      const savedUsers = savedUsersString ? JSON.parse(savedUsersString) : [];
+      const user = savedUsers.find((u: any) => u.username === username);
+      
+      if (user) {
+        return { success: true, securityQuestion: user.securityQuestion };
+      }
+      return { success: false, error: "Username not found" };
+    } catch (error) {
+      console.error('Forgot password error:', error);
+      return { success: false, error: "An error occurred" };
+    }
+  };
+
+  const resetPassword = async (username: string, securityAnswer: string, newPassword: string): Promise<boolean> => {
+    try {
+      const savedUsersString = safeLocalStorageGet('registeredUsers');
+      const savedUsers = savedUsersString ? JSON.parse(savedUsersString) : [];
+      const userIndex = savedUsers.findIndex((u: any) => u.username === username);
+      
+      if (userIndex !== -1 && savedUsers[userIndex].securityAnswer.toLowerCase() === securityAnswer.toLowerCase()) {
+        savedUsers[userIndex].password = newPassword;
+        safeLocalStorageSet('registeredUsers', JSON.stringify(savedUsers));
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error('Reset password error:', error);
+      return false;
+    }
+  };
+
+  const changePassword = async (currentPassword: string, newPassword: string): Promise<boolean> => {
+    try {
+      if (!user) return false;
+      
+      const savedUsersString = safeLocalStorageGet('registeredUsers');
+      const savedUsers = savedUsersString ? JSON.parse(savedUsersString) : [];
+      const userIndex = savedUsers.findIndex((u: any) => u.username === user.username);
+      
+      if (userIndex !== -1 && savedUsers[userIndex].password === currentPassword) {
+        savedUsers[userIndex].password = newPassword;
+        safeLocalStorageSet('registeredUsers', JSON.stringify(savedUsers));
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error('Change password error:', error);
       return false;
     }
   };
@@ -127,7 +186,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, register, logout, isLoading }}>
+    <AuthContext.Provider value={{ user, login, register, logout, isLoading, forgotPassword, resetPassword, changePassword }}>
       {children}
     </AuthContext.Provider>
   );
