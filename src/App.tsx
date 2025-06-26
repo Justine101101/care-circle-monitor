@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -16,6 +15,7 @@ import Immunizations from "./pages/Immunizations";
 import Appointments from "./pages/Appointments";
 import SystemLogs from "./pages/SystemLogs";
 import NotFound from "./pages/NotFound";
+import AdminDashboard from "./pages/AdminDashboard";
 
 const queryClient = new QueryClient();
 
@@ -43,6 +43,7 @@ const AppContent = () => {
             <Route path="/dashboard/*" element={
               <DashboardLayout>
                 <Routes>
+                  <Route path="admin" element={<AdminDashboard />} />
                   <Route path="users" element={<Users />} />
                   <Route path="patients" element={<Patients />} />
                   <Route path="health-records" element={<HealthRecords />} />

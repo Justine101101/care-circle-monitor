@@ -2,10 +2,16 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Users, UserCheck, FileText, Syringe, Calendar, Activity } from "lucide-react";
+import { Users, UserCheck, FileText, Syringe, Calendar, Activity, LayoutDashboard } from "lucide-react";
 
 const Index = () => {
   const features = [
+    {
+      title: "Admin Dashboard",
+      description: "System overview and administrative controls",
+      icon: LayoutDashboard,
+      href: "/dashboard/admin",
+    },
     {
       title: "User Management",
       description: "Manage healthcare staff and administrators",
@@ -54,9 +60,9 @@ const Index = () => {
           <p className="text-xl text-gray-600 mb-8">
             Comprehensive Healthcare Management System
           </p>
-          <Link to="/dashboard/users">
+          <Link to="/dashboard/admin">
             <Button size="lg" className="bg-blue-600 hover:bg-blue-700">
-              Access Dashboard
+              Access Admin Dashboard
             </Button>
           </Link>
         </div>

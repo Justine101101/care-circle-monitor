@@ -1,5 +1,5 @@
 
-import { Users, UserCheck, FileText, Syringe, Calendar, Activity } from "lucide-react";
+import { Users, UserCheck, FileText, Syringe, Calendar, Activity, LayoutDashboard } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 
 import {
@@ -15,6 +15,11 @@ import {
 } from "@/components/ui/sidebar";
 
 const items = [
+  {
+    title: "Admin Dashboard",
+    url: "/dashboard/admin",
+    icon: LayoutDashboard,
+  },
   {
     title: "Users",
     url: "/dashboard/users",
